@@ -368,6 +368,59 @@
 			margin: 0;
 			color: #555;
 		}
+		/* --- 底部友情链接区 (Footer) 样式 --- */
+        footer {
+            background-color: var(--primary-navy);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 40px 20px 20px;
+            margin-top: 60px;
+            text-align: center;
+            border-top: 4px solid var(--accent-gold); /* 呼应顶部的学术金 */
+        }
+        
+        .footer-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .footer-container h4 {
+            color: var(--accent-gold);
+            font-size: 14px;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .friend-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 30px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px; /* 链接之间的间距 */
+        }
+
+        .friend-links li a {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.3);
+            padding-bottom: 3px;
+        }
+
+        .friend-links li a:hover {
+            color: var(--accent-gold);
+            border-bottom-color: var(--accent-gold);
+        }
+
+        .copyright {
+            font-size: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 15px;
+            font-family: "Courier New", Courier, monospace;
+        }
 	</style>
 </head>
 
@@ -522,6 +575,19 @@
 		</div>
 
 	</div>
+
+	<footer>
+        <div class="footer-container">
+            <h4>Friendly Links / 学术共同体</h4>
+            <ul class="friend-links">
+                <li><a href="https://webofnothing.org/" target="_blank">Web of Nothing (万方无网)</a></li>
+                <li><a href="https://tctco.github.io/Web-of-Absurd/" target="_blank">Web of Absurd (荒谬之网)</a></li>
+                <li><a href="http://121.41.230.120:3000/" target="_blank">OpenJunk (开放垃圾)</a></li>
+                <li><a href="https://caonu.labbricker.com/" target="_blank">没用科学院 (CAONU)</a></li>
+            </ul>
+            <p class="copyright">© 2026 Association for Computing Chicken. All Rights Reversed.</p>
+        </div>
+    </footer>
 
 	<script>
 		// 1. 生成唯一的高逼格十六进制 ID
