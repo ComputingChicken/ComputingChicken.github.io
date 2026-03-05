@@ -1,428 +1,598 @@
-	<!DOCTYPE html>
-	<html lang="zh-CN">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>ACC 计算鸡协会 - Association for Computing Chicken</title>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-		<style>
-			/* 经典学术机构配色：牛津蓝、学术金、极简白 */
-			:root {
-				--primary-navy: #0A2240;
-				--accent-gold: #C5A059;
-				--bg-light: #F4F6F8;
-				--text-main: #333333;
-				--border-color: #E1E4E8;
-				--card-bg: #FFFFFF;
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>ACC 计算鸡协会 - Association for Computing Chicken</title>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	<style>
+		/* 经典学术机构配色：牛津蓝、学术金、极简白 */
+		:root {
+			--primary-navy: #0A2240;
+			--accent-gold: #C5A059;
+			--bg-light: #F4F6F8;
+			--text-main: #333333;
+			--border-color: #E1E4E8;
+			--card-bg: #FFFFFF;
+		}
+
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+			margin: 0;
+			padding: 0;
+			background-color: var(--bg-light);
+			color: var(--text-main);
+			line-height: 1.6;
+		}
+
+		/* 增加权威感的衬线字体用于标题 */
+		h1,
+		h2,
+		h3,
+		h4 {
+			font-family: "Georgia", "Times New Roman", serif;
+			color: var(--primary-navy);
+			margin-top: 0;
+		}
+
+		/* 顶部权威横幅区 */
+		header {
+			background-color: #FFFFFF;
+			padding: 25px 0;
+			text-align: center;
+			border-bottom: 1px solid var(--border-color);
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+		}
+
+		.header-container {
+			max-width: 1100px;
+			margin: 0 auto;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+		}
+
+		.full-logo {
+			height: 80px;
+			/* 使用你提供的完整版 logo2.jpg */
+			margin-bottom: 10px;
+			object-fit: contain;
+		}
+
+		.org-title {
+			font-size: 28px;
+			font-weight: normal;
+			letter-spacing: 1px;
+			color: var(--primary-navy);
+			margin: 0;
+		}
+
+		/* 严肃的导航栏 */
+		nav {
+			background-color: var(--primary-navy);
+			display: flex;
+			justify-content: center;
+			position: sticky;
+			top: 0;
+			z-index: 1000;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+
+		.nav-links {
+			list-style: none;
+			display: flex;
+			margin: 0;
+			padding: 0;
+		}
+
+		.nav-links li {
+			margin: 0;
+		}
+
+		.nav-links a {
+			display: block;
+			color: #FFFFFF;
+			text-decoration: none;
+			font-size: 14px;
+			font-weight: 500;
+			letter-spacing: 0.5px;
+			padding: 18px 25px;
+			transition: all 0.3s ease;
+			cursor: pointer;
+			border-bottom: 3px solid transparent;
+		}
+
+		.nav-links a:hover,
+		.nav-links a.active-link {
+			background-color: rgba(255, 255, 255, 0.05);
+			color: var(--accent-gold);
+			border-bottom: 3px solid var(--accent-gold);
+		}
+
+		/* 内容区容器 */
+		.container {
+			max-width: 1000px;
+			margin: 40px auto;
+			padding: 40px;
+			background: #FFFFFF;
+			border-radius: 4px;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.05);
+			border-top: 4px solid var(--accent-gold);
+		}
+
+		.section {
+			display: none;
+		}
+
+		.section.active {
+			display: block;
+			animation: fadeIn 0.6s ease-out;
+		}
+
+		@keyframes fadeIn {
+			from {
+				opacity: 0;
+				transform: translateY(10px);
 			}
 
-			body { 
-				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-				margin: 0; 
-				padding: 0; 
-				background-color: var(--bg-light); 
-				color: var(--text-main); 
-				line-height: 1.6;
+			to {
+				opacity: 1;
+				transform: translateY(0);
 			}
+		}
 
-			/* 增加权威感的衬线字体用于标题 */
-			h1, h2, h3, h4 { 
-				font-family: "Georgia", "Times New Roman", serif; 
-				color: var(--primary-navy); 
-				margin-top: 0;
-			}
+		hr {
+			border: 0;
+			height: 1px;
+			background: var(--border-color);
+			margin: 30px 0;
+		}
 
-			/* 顶部权威横幅区 */
-			header {
-				background-color: #FFFFFF;
-				padding: 25px 0;
-				text-align: center;
-				border-bottom: 1px solid var(--border-color);
-				box-shadow: 0 2px 10px rgba(0,0,0,0.02);
-			}
-			
-			.header-container {
-				max-width: 1100px;
-				margin: 0 auto;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				flex-direction: column;
-			}
+		/* 表单区样式优化 */
+		.reg-container {
+			display: flex;
+			gap: 50px;
+			flex-wrap: wrap;
+			margin-top: 30px;
+		}
 
-			.full-logo {
-				height: 80px; /* 使用你提供的完整版 logo2.jpg */
-				margin-bottom: 10px;
-				object-fit: contain;
-			}
+		.form-box {
+			flex: 1;
+			min-width: 320px;
+		}
 
-			.org-title {
-				font-size: 28px;
-				font-weight: normal;
-				letter-spacing: 1px;
-				color: var(--primary-navy);
-				margin: 0;
-			}
+		.form-group {
+			margin-bottom: 20px;
+		}
 
-			/* 严肃的导航栏 */
-			nav { 
-				background-color: var(--primary-navy); 
-				display: flex; 
-				justify-content: center; 
-				position: sticky; 
-				top: 0; 
-				z-index: 1000;
-				box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-			}
-			
-			.nav-links { 
-				list-style: none; 
-				display: flex; 
-				margin: 0; 
-				padding: 0; 
-			}
-			
-			.nav-links li { margin: 0; }
-			
-			.nav-links a { 
-				display: block;
-				color: #FFFFFF; 
-				text-decoration: none; 
-				font-size: 14px;
-				font-weight: 500;
-				letter-spacing: 0.5px;
-				padding: 18px 25px; 
-				transition: all 0.3s ease;
-				cursor: pointer;
-				border-bottom: 3px solid transparent;
-			}
-			
-			.nav-links a:hover, .nav-links a.active-link { 
-				background-color: rgba(255, 255, 255, 0.05);
-				color: var(--accent-gold); 
-				border-bottom: 3px solid var(--accent-gold);
-			}
+		.form-group label {
+			display: block;
+			font-weight: 600;
+			font-size: 14px;
+			color: #555;
+			margin-bottom: 8px;
+		}
 
-			/* 内容区容器 */
-			.container { 
-				max-width: 1000px; 
-				margin: 40px auto; 
-				padding: 40px; 
-				background: #FFFFFF; 
-				border-radius: 4px; 
-				box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.05); 
-				border-top: 4px solid var(--accent-gold);
-			}
+		.form-group input,
+		.form-group select {
+			width: 100%;
+			padding: 10px 12px;
+			border: 1px solid #ccc;
+			border-radius: 4px;
+			box-sizing: border-box;
+			font-size: 14px;
+			transition: border-color 0.3s;
+		}
 
-			.section { display: none; }
-			.section.active { display: block; animation: fadeIn 0.6s ease-out; }
-			@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+		.form-group input:focus,
+		.form-group select:focus {
+			border-color: var(--primary-navy);
+			outline: none;
+			box-shadow: 0 0 0 2px rgba(10, 34, 64, 0.1);
+		}
 
-			hr { border: 0; height: 1px; background: var(--border-color); margin: 30px 0; }
+		.btn {
+			background-color: var(--primary-navy);
+			color: #fff;
+			border: none;
+			padding: 12px 24px;
+			font-weight: 600;
+			border-radius: 4px;
+			cursor: pointer;
+			transition: 0.3s;
+			width: 100%;
+			font-size: 15px;
+			letter-spacing: 0.5px;
+		}
 
-			/* 表单区样式优化 */
-			.reg-container { display: flex; gap: 50px; flex-wrap: wrap; margin-top: 30px;}
-			.form-box { flex: 1; min-width: 320px; }
-			.form-group { margin-bottom: 20px; }
-			.form-group label { display: block; font-weight: 600; font-size: 14px; color: #555; margin-bottom: 8px; }
-			.form-group input, .form-group select { 
-				width: 100%; padding: 10px 12px; border: 1px solid #ccc; 
-				border-radius: 4px; box-sizing: border-box; font-size: 14px;
-				transition: border-color 0.3s;
-			}
-			.form-group input:focus, .form-group select:focus {
-				border-color: var(--primary-navy); outline: none;
-				box-shadow: 0 0 0 2px rgba(10, 34, 64, 0.1);
-			}
-			
-			.btn { 
-				background-color: var(--primary-navy); color: #fff; border: none; 
-				padding: 12px 24px; font-weight: 600; border-radius: 4px; 
-				cursor: pointer; transition: 0.3s; width: 100%; font-size: 15px;
-				letter-spacing: 0.5px;
-			}
-			.btn:hover { background-color: var(--accent-gold); color: var(--primary-navy); }
+		.btn:hover {
+			background-color: var(--accent-gold);
+			color: var(--primary-navy);
+		}
 
-			/* 学术身份证件排版 (严谨官方风格) */
-			.card-preview { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 380px; }
-			.id-card { 
-				width: 380px; height: 240px; 
-				background: #FFFFFF;
-				border: 1px solid #E0E0E0; 
-				border-top: 8px solid var(--primary-navy);
-				border-radius: 6px; 
-				box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-				padding: 20px; box-sizing: border-box; 
-				position: relative; font-family: 'Arial', sans-serif;
-				overflow: hidden;
-			}
-			
-			/* 防伪底纹/水印 */
-			.id-card::before { 
-				content: 'ACC OFFICIAL'; position: absolute; font-size: 45px; font-weight: bold;
-				color: rgba(0,0,0,0.02); transform: rotate(-30deg); top: 80px; left: 10px; 
-				z-index: 0; pointer-events: none; white-space: nowrap;
-			}
+		/* 学术身份证件排版 (严谨官方风格) */
+		.card-preview {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			min-width: 380px;
+		}
 
-			.card-header { 
-				display: flex; align-items: center; border-bottom: 1px solid var(--border-color); 
-				padding-bottom: 10px; margin-bottom: 15px; z-index: 1; position: relative;
-			}
-			.card-header img { height: 32px; margin-right: 12px; } /* 使用 icon logo.png */
-			.card-header h3 { margin: 0; font-size: 15px; color: var(--primary-navy); letter-spacing: 0.5px; text-transform: uppercase;}
-			
-			.card-body { display: flex; z-index: 1; position: relative; }
-			.card-avatar { 
-				width: 85px; height: 110px; border: 1px solid #ccc; 
-				background-color: #F8F9FA; object-fit: cover; border-radius: 2px;
-				padding: 2px;
-			}
-			
-			.card-info { margin-left: 18px; flex: 1; }
-			.card-info p { margin: 4px 0; font-size: 12px; color: #666; font-family: "Courier New", Courier, monospace;}
-			.card-info p strong { color: #333; font-family: Arial, sans-serif;}
-			
-			.c-name { font-size: 18px; font-weight: bold; color: var(--primary-navy); margin-bottom: 2px; text-transform: uppercase;}
-			.c-role { font-size: 12px; color: var(--accent-gold); font-weight: bold; margin-bottom: 10px; text-transform: uppercase;}
-			
-			.card-id-row { 
-				margin-top: 10px; padding-top: 8px; 
-				border-top: 1px dashed #E0E0E0; 
-				font-size: 11px; color: #888;
-				display: flex; justify-content: space-between;
-			}
-			.hex-id { font-family: "Courier New", Courier, monospace; font-weight: bold; color: var(--primary-navy);}
+		.id-card {
+			width: 380px;
+			height: 240px;
+			background: #FFFFFF;
+			border: 1px solid #E0E0E0;
+			border-top: 8px solid var(--primary-navy);
+			border-radius: 6px;
+			box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			box-sizing: border-box;
+			position: relative;
+			font-family: 'Arial', sans-serif;
+			overflow: hidden;
+		}
 
-			/* 列表样式优化 */
-			.academic-list { list-style: none; padding: 0; }
-			.academic-list li { 
-				padding: 15px 0; 
-				border-bottom: 1px solid var(--border-color);
-			}
-			.academic-list li:last-child { border-bottom: none; }
-			.academic-list h4 { margin: 0 0 5px 0; font-size: 18px; }
-			.academic-list p { margin: 0; color: #555; }
-		</style>
-	</head>
-	<body>
+		/* 防伪底纹/水印 */
+		.id-card::before {
+			content: 'ACC OFFICIAL';
+			position: absolute;
+			font-size: 45px;
+			font-weight: bold;
+			color: rgba(0, 0, 0, 0.02);
+			transform: rotate(-30deg);
+			top: 80px;
+			left: 10px;
+			z-index: 0;
+			pointer-events: none;
+			white-space: nowrap;
+		}
 
-		<header>
-			<div class="header-container">
-				<img class="full-logo" src="./imgs/logo2.png" alt="ACC Official Logo" onerror="this.src='https://via.placeholder.com/400x80?text=ASSOCIATION+FOR+COMPUTING+CHICKEN'">
-				<h1 class="org-title">计算鸡邪会 (Association for Computing Chicken)</h1>
-			</div>
-		</header>
+		.card-header {
+			display: flex;
+			align-items: center;
+			border-bottom: 1px solid var(--border-color);
+			padding-bottom: 10px;
+			margin-bottom: 15px;
+			z-index: 1;
+			position: relative;
+		}
 
-		<nav>
-			<ul class="nav-links">
-				<li><a onclick="showSection('home')" id="nav-home" class="active-link">学会主页</a></li>
-				<li><a onclick="showSection('register')" id="nav-register">烩员注册</a></li>
-				<li><a onclick="showSection('committees')" id="nav-committees">专业委员会</a></li>
-				<li><a href="https://github.com/YOUR_USERNAME/ComputingChicken/issues" target="_blank">学术出版 ↗</a></li>
-				<li><a onclick="showSection('awards')" id="nav-awards">学术奖励</a></li>
-				<li><a href="https://github.com/YOUR_USERNAME/ComputingChicken/discussions" target="_blank">社区讨论 ↗</a></li>
+		.card-header img {
+			height: 32px;
+			margin-right: 12px;
+		}
+
+		/* 使用 icon logo.png */
+		.card-header h3 {
+			margin: 0;
+			font-size: 12px;
+			/* 字体从15px调小到12px以适应长文本 */
+			color: var(--primary-navy);
+			letter-spacing: 0.5px;
+			text-transform: uppercase;
+			white-space: nowrap;
+			/* 强制不换行，保持严谨的一行排版 */
+		}
+
+		.card-body {
+			display: flex;
+			z-index: 1;
+			position: relative;
+		}
+
+		.card-avatar {
+			width: 85px;
+			height: 110px;
+			border: 1px solid #ccc;
+			background-color: #F8F9FA;
+			object-fit: cover;
+			border-radius: 2px;
+			padding: 2px;
+		}
+
+		.card-info {
+			margin-left: 18px;
+			flex: 1;
+		}
+
+		.card-info p {
+			margin: 4px 0;
+			font-size: 12px;
+			color: #666;
+			font-family: "Courier New", Courier, monospace;
+		}
+
+		.card-info p strong {
+			color: #333;
+			font-family: Arial, sans-serif;
+		}
+
+		.c-name {
+			font-size: 18px;
+			font-weight: bold;
+			color: var(--primary-navy);
+			margin-bottom: 2px;
+			text-transform: uppercase;
+		}
+
+		.c-role {
+			font-size: 12px;
+			color: var(--accent-gold);
+			font-weight: bold;
+			margin-bottom: 10px;
+			text-transform: uppercase;
+		}
+
+		.card-id-row {
+			margin-top: 10px;
+			padding-top: 8px;
+			border-top: 1px dashed #E0E0E0;
+			font-size: 11px;
+			color: #888;
+			display: flex;
+			justify-content: space-between;
+		}
+
+		.hex-id {
+			font-family: "Courier New", Courier, monospace;
+			font-weight: bold;
+			color: var(--primary-navy);
+		}
+
+		/* 列表样式优化 */
+		.academic-list {
+			list-style: none;
+			padding: 0;
+		}
+
+		.academic-list li {
+			padding: 15px 0;
+			border-bottom: 1px solid var(--border-color);
+		}
+
+		.academic-list li:last-child {
+			border-bottom: none;
+		}
+
+		.academic-list h4 {
+			margin: 0 0 5px 0;
+			font-size: 18px;
+		}
+
+		.academic-list p {
+			margin: 0;
+			color: #555;
+		}
+	</style>
+</head>
+
+<body>
+
+	<header>
+		<div class="header-container">
+			<img class="full-logo" src="./imgs/logo2.png" alt="ACC Official Logo"
+				onerror="this.src='https://via.placeholder.com/400x80?text=ASSOCIATION+FOR+COMPUTING+CHICKEN'">
+			<h1 class="org-title">计算鸡邪会 (Association for Computing Chicken)</h1>
+		</div>
+	</header>
+
+	<nav>
+		<ul class="nav-links">
+			<li><a onclick="showSection('home')" id="nav-home" class="active-link">学会主页</a></li>
+			<li><a onclick="showSection('register')" id="nav-register">烩员注册</a></li>
+			<li><a onclick="showSection('committees')" id="nav-committees">专业委员会</a></li>
+			<li><a href="https://github.com/YOUR_USERNAME/ComputingChicken/issues" target="_blank">学术出版 ↗</a></li>
+			<li><a onclick="showSection('awards')" id="nav-awards">学术奖励</a></li>
+			<li><a href="https://github.com/YOUR_USERNAME/ComputingChicken/discussions" target="_blank">社区讨论 ↗</a></li>
+		</ul>
+	</nav>
+
+	<div class="container">
+		<div id="home" class="section active">
+			<h2>Welcome to the ACC</h2>
+			<p>填补 CS 界学术垃圾空白，为广大深受 Bug、Reviewer 2 和脱发折磨的科研工作者、工程师提供具有国际影响力的学术交流平台与避风港。</p>
+			<p style="font-family: 'Georgia', serif; font-size: 18px; color: var(--accent-gold); font-style: italic;">
+				"In ACC We Trust, On Seed We Depend."
+			</p>
+			<hr>
+			<h3>Navigation Guide / 快速事务指引</h3>
+			<ul class="academic-list">
+				<li>
+					<h4>办理烩员会籍 (Membership)</h4>
+					<p>点击上方导航栏的 <b>【烩员注册】</b>，免费申领由 ACC 认证的专属十六进制身份标识与电子通行证。</p>
+				</li>
+				<li>
+					<h4>投递学术论文 (Publications)</h4>
+					<p>通过 <b>【学术出版】</b> 进入官方 Issues 系统，提交您那毫无逻辑却能奇迹般运行的学术代码与论文。</p>
+				</li>
+				<li>
+					<h4>参与学术争鸣 (Community Discussions)</h4>
+					<p>通过 <b>【社区讨论】</b> 进入 ACC 官方论坛，参与顶级玄学调参研讨与底层架构吐槽。</p>
+				</li>
 			</ul>
-		</nav>
-
-		<div class="container">
-			<div id="home" class="section active">
-				<h2>Welcome to the ACC</h2>
-				<p>填补 CS 界学术垃圾空白，为广大深受 Bug、Reviewer 2 和脱发折磨的科研工作者、工程师提供具有国际影响力的学术交流平台与避风港。</p>
-				<p style="font-family: 'Georgia', serif; font-size: 18px; color: var(--accent-gold); font-style: italic;">
-					"In ACC We Trust, On Seed We Depend."
-				</p>
-				<hr>
-				<h3>Navigation Guide / 快速事务指引</h3>
-				<ul class="academic-list">
-					<li>
-						<h4>办理烩员会籍 (Membership)</h4>
-						<p>点击上方导航栏的 <b>【烩员注册】</b>，免费申领由 ACC 认证的专属十六进制身份标识与电子通行证。</p>
-					</li>
-					<li>
-						<h4>投递学术论文 (Publications)</h4>
-						<p>通过 <b>【学术出版】</b> 进入官方 Issues 系统，提交您那毫无逻辑却能奇迹般运行的学术代码与论文。</p>
-					</li>
-					<li>
-						<h4>参与学术争鸣 (Community Discussions)</h4>
-						<p>通过 <b>【社区讨论】</b> 进入 ACC 官方论坛，参与顶级玄学调参研讨与底层架构吐槽。</p>
-					</li>
-				</ul>
-			</div>
-
-			<div id="register" class="section">
-				<h2>Membership Registration / 烩员注册</h2>
-				<p>请如实填写您的学术经历以生成唯一的 ACC 认证身份卡。系统将为您自动分配全球唯一的十六进制防伪 ID。</p>
-				
-				<div class="reg-container">
-					<div class="form-box">
-						<div class="form-group">
-							<label>头像采集 (Avatar Upload):</label>
-							<input type="file" id="f-avatar" accept="image/*" onchange="previewAvatar(event)">
-						</div>
-						<div class="form-group">
-							<label>真实姓名 / 学术代号 (Full Name):</label>
-							<input type="text" id="f-name" placeholder="例：调参仙人 / Dr. Zhang" oninput="updateCard()">
-						</div>
-						<div class="form-group">
-							<label>所属机构 / 精神病院 (Institution):</label>
-							<input type="text" id="f-org" placeholder="例：家里蹲大学炼丹系" oninput="updateCard()">
-						</div>
-						<div class="form-group">
-							<label>学术联络邮箱 (Email):</label>
-							<input type="email" id="f-email" placeholder="author@bug.edu" oninput="updateCard()">
-						</div>
-						<div class="form-group">
-							<label>申请会籍级别 (Membership Level):</label>
-							<select id="f-level" onchange="updateCard()">
-								<option value="Student Mambo">学生烩员 (Student Mambo) - 饱受导师折磨</option>
-								<option value="Member (Mambo)" selected>正式烩员 (Member) - 普通代码搬运工</option>
-								<option value="Senior Mambo">高级烩员 (Senior Mambo) - 资深背锅侠</option>
-								<option value="ACC Feellow">学会烩士 (ACC Feellow) - 终身学术垃圾制造者</option>
-							</select>
-						</div>
-					</div>
-
-					<div class="card-preview">
-						<div class="id-card" id="card-dom">
-							<div class="card-header">
-								<img src="./imgs/logo.png" alt="Icon" onerror="this.src='https://via.placeholder.com/32?text=C'">
-								<h3>Association for Computing Chicken</h3>
-							</div>
-							<div class="card-body">
-								<img id="c-avatar" class="card-avatar" src="https://via.placeholder.com/85x110?text=Photo">
-								<div class="card-info">
-									<div class="c-name" id="c-name">Dr. Unknown</div>
-									<div class="c-role" id="c-level">Member (Mambo)</div>
-									<p><strong>ORG:</strong> <span id="c-org">Not Specified</span></p>
-									<p><strong>MAIL:</strong> <span id="c-email">author@bug.edu</span></p>
-								</div>
-							</div>
-							<div class="card-id-row">
-								<span>MEMBER ID:</span>
-								<span class="hex-id" id="c-hex-id">ACC-000000-0000</span>
-							</div>
-						</div>
-						<br>
-						<button class="btn" onclick="downloadPDF()">Download Official Certificate (PDF)</button>
-						<p style="font-size: 12px; color: #888; text-align: center; margin-top: 15px;">*该证件由 ACC 董事会加密签发，具有不可篡改的玄学效力。</p>
-					</div>
-				</div>
-			</div>
-
-			<div id="committees" class="section">
-				<h2>Technical Committees / 专业委员会</h2>
-				<p>ACC 致力于在全球范围内推动前沿计算机玄学科学的发展，首批下设以下核心学术分支：</p>
-				<ul class="academic-list">
-					<li>
-						<h4>深度学习炼丹专委会 (TC on Deep Learning Alchemy)</h4>
-						<p>专注模型玄学。量化研究“赛博焚香”、“显卡物理开光”以及“更换幸运 Random Seed”对模型收敛与毕业率的决定性影响。</p>
-					</li>
-					<li>
-						<h4>防御性编程专委会 (TC on Defensive Programming)</h4>
-						<p>专注“屎山代码”的非破坏性堆叠艺术与祖传代码保护。探讨如何优雅地写出让接盘侠破防的嵌套 if-else。</p>
-					</li>
-					<li>
-						<h4>尖叫鸡调试法专委会 (TC on Screaming Chicken Debugging)</h4>
-						<p>摒弃传统且温和的“小黄鸭调试法”，全面推行高分贝物理尖叫鸡，通过声波震慑物理超度无法复现的薛定谔 Bug。</p>
-					</li>
-					<li>
-						<h4>学术“咕咕咕”与延期动力学专委会 (TC on Academic "Gugugu")</h4>
-						<p>深入研究如何运用最晦涩的底层架构词汇与算法黑话，向导师、产品经理或投资人优雅地解释项目延期（放鸽子）的客观不可抗力。</p>
-					</li>
-				</ul>
-			</div>
-
-			<div id="awards" class="section">
-				<h2>Academic Awards / 官方学术荣誉</h2>
-				<p>为表彰在学术垃圾制造与代码堆叠领域做出杰出贡献的学者，ACC 特设以下最高荣誉：</p>
-				<ul class="academic-list">
-					<li>
-						<h4>图灵鸡奖 (Turing Chicken Award)</h4>
-						<p>本学会最高荣誉。授予那些写出“运行逻辑连图灵本人都看不懂，但它偏偏就是能跑通”的绝世代码的工程先驱。</p>
-					</li>
-					<li>
-						<h4>最佳退稿奖 (Best Reject Award)</h4>
-						<p>年度特别奖。颁发给本年度被顶级学术会议的 Reviewer 2 使用最离谱、最具主观侮辱性理由无情拒稿的坚韧作者。</p>
-					</li>
-					<li>
-						<h4>屎山架构终身成就奖 (Lifetime Spaghetti Architecture Award)</h4>
-						<p>颁发给那些离职/毕业三年后，其留下的核心代码依然无人敢碰、无人敢删、仅凭一己之力绑架整个项目组的伟大架构师。</p>
-					</li>
-				</ul>
-			</div>
-
 		</div>
 
-		<script>
-			// 1. 生成唯一的高逼格十六进制 ID
-			function generateHexId() {
-				// 取时间戳的后5位转16进制
-				const timestamp = Date.now().toString(16).slice(-5).toUpperCase();
-				// 生成一段随机的 4位 16进制数
-				const random = Math.floor(Math.random() * 65535).toString(16).padStart(4, '0').toUpperCase();
-				return `ACC-${timestamp}-${random}`;
-			}
+		<div id="register" class="section">
+			<h2>Membership Registration / 烩员注册</h2>
+			<p>请如实填写您的学术经历以生成唯一的 ACC 认证身份卡。系统将为您自动分配全球唯一的十六进制防伪 ID。</p>
 
-			// 页面加载完毕时，自动分配 ID
-			document.addEventListener('DOMContentLoaded', () => {
-				document.getElementById('c-hex-id').innerText = generateHexId();
-			});
+			<div class="reg-container">
+				<div class="form-box">
+					<div class="form-group">
+						<label>头像采集 (Avatar Upload):</label>
+						<input type="file" id="f-avatar" accept="image/*" onchange="previewAvatar(event)">
+					</div>
+					<div class="form-group">
+						<label>真实姓名 / 学术代号 (Full Name):</label>
+						<input type="text" id="f-name" placeholder="例：调参仙人 / Dr. Zhang" oninput="updateCard()">
+					</div>
+					<div class="form-group">
+						<label>所属机构 / 精神病院 (Institution):</label>
+						<input type="text" id="f-org" placeholder="例：家里蹲大学炼丹系" oninput="updateCard()">
+					</div>
+					<div class="form-group">
+						<label>学术联络邮箱 (Email):</label>
+						<input type="email" id="f-email" placeholder="author@bug.edu" oninput="updateCard()">
+					</div>
+					<div class="form-group">
+						<label>申请会籍级别 (Membership Level):</label>
+						<select id="f-level" onchange="updateCard()">
+							<option value="Student Mambo">学生烩员 (Student Mambo) - 饱受导师折磨</option>
+							<option value="Member (Mambo)" selected>正式烩员 (Member) - 普通代码搬运工</option>
+							<option value="Senior Mambo">高级烩员 (Senior Mambo) - 资深背锅侠</option>
+							<option value="ACC Feellow">学会烩士 (ACC Feellow) - 终身学术垃圾制造者</option>
+						</select>
+					</div>
+				</div>
 
-			// 2. 前端路由：切换页面显示，并更新导航栏 active 状态
-			function showSection(id) {
-				// 隐藏所有内容
-				document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-				// 移除导航高亮
-				document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active-link'));
-				
-				// 显示目标内容
-				document.getElementById(id).classList.add('active');
-				// 高亮当前导航 (过滤掉外链)
-				const targetNav = document.getElementById('nav-' + id);
-				if(targetNav) targetNav.classList.add('active-link');
-			}
+				<div class="card-preview">
+					<div class="id-card" id="card-dom">
+						<div class="card-header">
+							<img src="./imgs/logo.png" alt="Icon"
+								onerror="this.src='https://via.placeholder.com/32?text=C'">
+							<h3>Association for Computing Chicken</h3>
+						</div>
+						<div class="card-body">
+							<img id="c-avatar" class="card-avatar" src="https://via.placeholder.com/85x110?text=Photo">
+							<div class="card-info">
+								<div class="c-name" id="c-name">Dr. Unknown</div>
+								<div class="c-role" id="c-level">Member (Mambo)</div>
+								<p><strong>ORG:</strong> <span id="c-org">Not Specified</span></p>
+								<p><strong>MAIL:</strong> <span id="c-email">author@bug.edu</span></p>
+							</div>
+						</div>
+						<div class="card-id-row">
+							<span>MEMBER ID:</span>
+							<span class="hex-id" id="c-hex-id">ACC-000000-0000</span>
+						</div>
+					</div>
+					<br>
+					<button class="btn" onclick="downloadPDF()">Download Official Certificate (PDF)</button>
+					<p style="font-size: 12px; color: #888; text-align: center; margin-top: 15px;">*该证件由 ACC
+						董事会加密签发，具有不可篡改的玄学效力。</p>
+				</div>
+			</div>
+		</div>
 
-			// 3. 表单与卡片数据双向绑定
-			function updateCard() {
-				document.getElementById('c-name').innerText = document.getElementById('f-name').value || 'Dr. Unknown';
-				document.getElementById('c-org').innerText = document.getElementById('f-org').value || 'Not Specified';
-				document.getElementById('c-email').innerText = document.getElementById('f-email').value || 'author@bug.edu';
-				document.getElementById('c-level').innerText = document.getElementById('f-level').value;
-			}
+		<div id="committees" class="section">
+			<h2>Technical Committees / 专业委员会</h2>
+			<p>ACC 致力于在全球范围内推动前沿计算机玄学科学的发展，首批下设以下核心学术分支：</p>
+			<ul class="academic-list">
+				<li>
+					<h4>深度学习炼丹专委会 (TC on Deep Learning Alchemy)</h4>
+					<p>专注模型玄学。量化研究“赛博焚香”、“显卡物理开光”以及“更换幸运 Random Seed”对模型收敛与毕业率的决定性影响。</p>
+				</li>
+				<li>
+					<h4>防御性编程专委会 (TC on Defensive Programming)</h4>
+					<p>专注“屎山代码”的非破坏性堆叠艺术与祖传代码保护。探讨如何优雅地写出让接盘侠破防的嵌套 if-else。</p>
+				</li>
+				<li>
+					<h4>尖叫鸡调试法专委会 (TC on Screaming Chicken Debugging)</h4>
+					<p>摒弃传统且温和的“小黄鸭调试法”，全面推行高分贝物理尖叫鸡，通过声波震慑物理超度无法复现的薛定谔 Bug。</p>
+				</li>
+				<li>
+					<h4>学术“咕咕咕”与延期动力学专委会 (TC on Academic "Gugugu")</h4>
+					<p>深入研究如何运用最晦涩的底层架构词汇与算法黑话，向导师、产品经理或投资人优雅地解释项目延期（放鸽子）的客观不可抗力。</p>
+				</li>
+			</ul>
+		</div>
 
-			// 4. 处理本地头像图片预览
-			function previewAvatar(event) {
-				const file = event.target.files[0];
-				if (file) {
-					const reader = new FileReader();
-					reader.onload = function(e) {
-						document.getElementById('c-avatar').src = e.target.result;
-					}
-					reader.readAsDataURL(file);
+		<div id="awards" class="section">
+			<h2>Academic Awards / 官方学术荣誉</h2>
+			<p>为表彰在学术垃圾制造与代码堆叠领域做出杰出贡献的学者，ACC 特设以下最高荣誉：</p>
+			<ul class="academic-list">
+				<li>
+					<h4>图灵鸡奖 (Turing Chicken Award)</h4>
+					<p>本学会最高荣誉。授予那些写出“运行逻辑连图灵本人都看不懂，但它偏偏就是能跑通”的绝世代码的工程先驱。</p>
+				</li>
+				<li>
+					<h4>最佳退稿奖 (Best Reject Award)</h4>
+					<p>年度特别奖。颁发给本年度被顶级学术会议的 Reviewer 2 使用最离谱、最具主观侮辱性理由无情拒稿的坚韧作者。</p>
+				</li>
+				<li>
+					<h4>屎山架构终身成就奖 (Lifetime Spaghetti Architecture Award)</h4>
+					<p>颁发给那些离职/毕业三年后，其留下的核心代码依然无人敢碰、无人敢删、仅凭一己之力绑架整个项目组的伟大架构师。</p>
+				</li>
+			</ul>
+		</div>
+
+	</div>
+
+	<script>
+		// 1. 生成唯一的高逼格十六进制 ID
+		function generateHexId() {
+			// 取时间戳的后5位转16进制
+			const timestamp = Date.now().toString(16).slice(-5).toUpperCase();
+			// 生成一段随机的 4位 16进制数
+			const random = Math.floor(Math.random() * 65535).toString(16).padStart(4, '0').toUpperCase();
+			return `ACC-${timestamp}-${random}`;
+		}
+
+		// 页面加载完毕时，自动分配 ID
+		document.addEventListener('DOMContentLoaded', () => {
+			document.getElementById('c-hex-id').innerText = generateHexId();
+		});
+
+		// 2. 前端路由：切换页面显示，并更新导航栏 active 状态
+		function showSection(id) {
+			// 隐藏所有内容
+			document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+			// 移除导航高亮
+			document.querySelectorAll('.nav-links a').forEach(link => link.classList.remove('active-link'));
+
+			// 显示目标内容
+			document.getElementById(id).classList.add('active');
+			// 高亮当前导航 (过滤掉外链)
+			const targetNav = document.getElementById('nav-' + id);
+			if (targetNav) targetNav.classList.add('active-link');
+		}
+
+		// 3. 表单与卡片数据双向绑定
+		function updateCard() {
+			document.getElementById('c-name').innerText = document.getElementById('f-name').value || 'Dr. Unknown';
+			document.getElementById('c-org').innerText = document.getElementById('f-org').value || 'Not Specified';
+			document.getElementById('c-email').innerText = document.getElementById('f-email').value || 'author@bug.edu';
+			document.getElementById('c-level').innerText = document.getElementById('f-level').value;
+		}
+
+		// 4. 处理本地头像图片预览
+		function previewAvatar(event) {
+			const file = event.target.files[0];
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = function (e) {
+					document.getElementById('c-avatar').src = e.target.result;
 				}
+				reader.readAsDataURL(file);
 			}
+		}
 
-			// 5. 将 DOM 渲染为 PDF 并下载 (纯前端生成)
-			function downloadPDF() {
-				const cardElement = document.getElementById('card-dom');
-				// 提升 scale 保证打印清晰度
-				html2canvas(cardElement, {scale: 4, useCORS: true}).then(canvas => {
-					const imgData = canvas.toDataURL('image/png');
-					const { jsPDF } = window.jspdf;
-					// 创建一个横向的 PDF，尺寸对应卡片的 380x240 比例
-					const pdf = new jsPDF({
-						orientation: 'landscape',
-						unit: 'px',
-						format: [380, 240]
-					});
-					pdf.addImage(imgData, 'PNG', 0, 0, 380, 240);
-					pdf.save('ACC_Official_ID_Card.pdf');
-				}).catch(err => {
-					alert("生成 PDF 失败，请检查浏览器权限。");
-					console.error(err);
+		// 5. 将 DOM 渲染为 PDF 并下载 (纯前端生成)
+		function downloadPDF() {
+			const cardElement = document.getElementById('card-dom');
+			// 提升 scale 保证打印清晰度
+			html2canvas(cardElement, { scale: 4, useCORS: true }).then(canvas => {
+				const imgData = canvas.toDataURL('image/png');
+				const { jsPDF } = window.jspdf;
+				// 创建一个横向的 PDF，尺寸对应卡片的 380x240 比例
+				const pdf = new jsPDF({
+					orientation: 'landscape',
+					unit: 'px',
+					format: [380, 240]
 				});
-			}
-		</script>
-	</body>
-	</html>
+				pdf.addImage(imgData, 'PNG', 0, 0, 380, 240);
+				pdf.save('ACC_Official_ID_Card.pdf');
+			}).catch(err => {
+				alert("生成 PDF 失败，请检查浏览器权限。");
+				console.error(err);
+			});
+		}
+	</script>
+</body>
+
+</html>
