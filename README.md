@@ -1,5 +1,7 @@
 # 计算鸡邪会 (Association for Computing Chicken, ACC)
 
+![ACC logo](/imgs/logo2.png "ACC logo")
+
 
 各位赛博炼丹师、屎山架构师、常年被 Bug 折磨、被导师PUA的脱发青年们，欢迎来到计算机领域的最低学术机构计算鸡邪会（Association for Computing Chicken, ACC）！
 
